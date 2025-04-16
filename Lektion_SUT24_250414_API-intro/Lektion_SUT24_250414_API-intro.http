@@ -1,0 +1,14 @@
+@Lektion_SUT24_250414_API_intro_HostAddress = https://localhost:7286
+
+
+GET {{Lektion_SUT24_250414_API_intro_HostAddress}}/api/farm
+
+###
+
+GET {{Lektion_SUT24_250414_API_intro_HostAddress}}/api/farm/3
+
+###
+
+GET {{Lektion_SUT24_250414_API_intro_HostAddress}}/weatherforecast
+
+###
