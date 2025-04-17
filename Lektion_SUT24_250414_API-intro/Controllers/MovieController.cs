@@ -21,7 +21,9 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         [HttpGet(Name = "GetMovies")]
         public async Task<ActionResult<ICollection<Movie>>> GetMovies()
         {
-            return Ok(await _context.Movies.Select(m => new { m.Title, m.Length, m.Genre, m.Director, m.Actors }).ToListAsync());
+            return Ok(await _context.Movies
+                .Select(m => new { m.Title, m.Length, m.Genre, m.Director, m.Actors })
+                .ToListAsync());
         }
 
         [HttpGet("{id}", Name = "GetMovieById")]
