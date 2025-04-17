@@ -8,6 +8,7 @@ namespace Lektion_SUT24_250414_API_intro.Data
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Director> Directors { get; set; }
         public DbSet<Actor> Actors { get; set; }
+        public DbSet<ActorMovie> ActorMovies { get; set; }
 
         public MovieDbContext(DbContextOptions<MovieDbContext> options) : base(options)
         {
@@ -66,20 +67,20 @@ namespace Lektion_SUT24_250414_API_intro.Data
             );
 
             // Seed Movie-Actor Relationships
-            modelBuilder.Entity<Movie>()
-                .HasMany(m => m.Actors)
-                .WithMany(a => a.Movies)
-                .UsingEntity(j => j.HasData(
-                    new { MoviesId = 1, ActorsId = 1 },
-                    new { MoviesId = 1, ActorsId = 2 },
-                    new { MoviesId = 1, ActorsId = 3 },
-                    new { MoviesId = 2, ActorsId = 4 },
-                    new { MoviesId = 2, ActorsId = 5 },
-                    new { MoviesId = 2, ActorsId = 6 },
-                    new { MoviesId = 3, ActorsId = 7 },
-                    new { MoviesId = 3, ActorsId = 8 },
-                    new { MoviesId = 3, ActorsId = 9 }
-                ));
+            modelBuilder.Entity<ActorMovie>().HasKey(am => new { am.ActorId, am.MovieId });
+
+            modelBuilder.Entity<ActorMovie>()
+                .HasData(
+                    new { MovieId = 1, ActorId = 1 },
+                    new { MovieId = 1, ActorId = 2 },
+                    new { MovieId = 1, ActorId = 3 },
+                    new { MovieId = 2, ActorId = 4 },
+                    new { MovieId = 2, ActorId = 5 },
+                    new { MovieId = 2, ActorId = 6 },
+                    new { MovieId = 3, ActorId = 7 },
+                    new { MovieId = 3, ActorId = 8 },
+                    new { MovieId = 3, ActorId = 9 }
+                );
         }
 
     }

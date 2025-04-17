@@ -13,5 +13,8 @@ namespace Lektion_SUT24_250414_API_intro.Models
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ICollection<Movie>? Movies { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public ICollection<ActorMovie>? ActorMovies { get; set; }
     }
 }

@@ -14,9 +14,12 @@ namespace Lektion_SUT24_250414_API_intro.Models
         public int DirectorId { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Director? Director { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ICollection<Actor>? Actors { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Director? Director { get; set; }
+        public ICollection<ActorMovie>? ActorMovies { get; set; }
     }
 }
