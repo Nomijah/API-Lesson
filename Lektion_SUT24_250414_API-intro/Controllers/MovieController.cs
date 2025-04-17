@@ -36,6 +36,8 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         }
 
         [HttpPost(Name = "CreateMovie")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateMovie(Movie newMovie)
         {
             if (newMovie == null)
