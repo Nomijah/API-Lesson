@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lektion_SUT24_250414_API_intro.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    [Migration("20250417102116_RelationModel")]
-    partial class RelationModel
+    [Migration("20250417105305_ActorsAdded")]
+    partial class ActorsAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace Lektion_SUT24_250414_API_intro.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ActorMovie", b =>
-                {
-                    b.Property<int>("ActorsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ActorsId", "MoviesId");
-
-                    b.HasIndex("MoviesId");
-
-                    b.ToTable("ActorMovie");
-                });
 
             modelBuilder.Entity("Lektion_SUT24_250414_API_intro.Models.Actor", b =>
                 {
@@ -283,31 +268,16 @@ namespace Lektion_SUT24_250414_API_intro.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ActorMovie", b =>
-                {
-                    b.HasOne("Lektion_SUT24_250414_API_intro.Models.Actor", null)
-                        .WithMany()
-                        .HasForeignKey("ActorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lektion_SUT24_250414_API_intro.Models.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MoviesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Lektion_SUT24_250414_API_intro.Models.ActorMovie", b =>
                 {
                     b.HasOne("Lektion_SUT24_250414_API_intro.Models.Actor", "Actor")
-                        .WithMany("ActorMovies")
+                        .WithMany()
                         .HasForeignKey("ActorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Lektion_SUT24_250414_API_intro.Models.Movie", "Movie")
-                        .WithMany("ActorMovies")
+                        .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -328,19 +298,9 @@ namespace Lektion_SUT24_250414_API_intro.Migrations
                     b.Navigation("Director");
                 });
 
-            modelBuilder.Entity("Lektion_SUT24_250414_API_intro.Models.Actor", b =>
-                {
-                    b.Navigation("ActorMovies");
-                });
-
             modelBuilder.Entity("Lektion_SUT24_250414_API_intro.Models.Director", b =>
                 {
                     b.Navigation("Movies");
-                });
-
-            modelBuilder.Entity("Lektion_SUT24_250414_API_intro.Models.Movie", b =>
-                {
-                    b.Navigation("ActorMovies");
                 });
 #pragma warning restore 612, 618
         }

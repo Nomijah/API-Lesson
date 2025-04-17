@@ -19,6 +19,27 @@ namespace Lektion_SUT24_250414_API_intro.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Composite primary key
+            //modelBuilder.Entity<ActorMovie>().HasKey(am => new { am.ActorId, am.MovieId });
+
+            modelBuilder.Entity<Movie>()
+                .HasMany(m => m.Actors)
+                .WithMany(a => a.Movies)
+                .UsingEntity<ActorMovie>();
+               
+
+            //// Configure the relationship between Actor and ActorMovie
+            //modelBuilder.Entity<ActorMovie>()
+            //    .HasOne(am => am.Actor)
+            //    .WithMany(a => a.ActorMovies)
+            //    .HasForeignKey(am => am.ActorId);
+
+            //// Configure the relationship between Movie and ActorMovie
+            //modelBuilder.Entity<ActorMovie>()
+            //    .HasOne(am => am.Movie)
+            //    .WithMany(m => m.ActorMovies)
+            //    .HasForeignKey(am => am.MovieId);
+
             // Seed Directors
             modelBuilder.Entity<Director>().HasData(
                 new Director(1, "Christopher", "Nolan", 1970),
@@ -67,8 +88,6 @@ namespace Lektion_SUT24_250414_API_intro.Data
             );
 
             // Seed Movie-Actor Relationships
-            modelBuilder.Entity<ActorMovie>().HasKey(am => new { am.ActorId, am.MovieId });
-
             modelBuilder.Entity<ActorMovie>()
                 .HasData(
                     new { MovieId = 1, ActorId = 1 },
