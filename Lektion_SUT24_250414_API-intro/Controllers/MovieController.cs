@@ -1,5 +1,6 @@
 ﻿using Lektion_SUT24_250414_API_intro.Data;
 using Lektion_SUT24_250414_API_intro.Models;
+using Lektion_SUT24_250414_API_intro.Models.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         [HttpPost(Name = "CreateMovie")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateMovie(Movie newMovie)
+        public async Task<IActionResult> CreateMovie(CreateMovieRequest newMovie)
         {
             if (newMovie == null)
             {
