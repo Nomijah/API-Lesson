@@ -47,10 +47,36 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
             {
                 return BadRequest(new { errorMessage = "Data missing." });
             }
-            _context.Movies.Add(newMovie);
+
+            var validActorIds = await _context.Actors
+                .Where(a => newMovie.ActorIds.Contains(a.Id))
+                .Select(a => a.Id)
+                .ToListAsync();
+
+            if (validActorIds.Count != newMovie.ActorIds.Length)
+            {
+                return BadRequest(new { errorMessage = "One or more actor IDs are invalid." });
+            }
+
+            var movieToAdd = new Movie()
+            {
+                Title = newMovie.Title,
+                Genre = newMovie.Genre,
+                Length = newMovie.Length,
+                DirectorId = newMovie.DirectorId
+            };
+
+            _context.Movies.Add(movieToAdd);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMovieById), new { id = newMovie.Id}, newMovie);
+            foreach (var actorId in validActorIds)
+            {
+                _context.ActorMovies.Add(new ActorMovie { ActorId = actorId, MovieId = movieToAdd.Id });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetMovieById), new { id = movieToAdd.Id }, movieToAdd);
         }
 
         [HttpPut("{id}", Name = "UpdateMovie")]
