@@ -1,5 +1,6 @@
 
 using Lektion_SUT24_250414_API_intro.Data;
+using Lektion_SUT24_250414_API_intro.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -13,6 +14,8 @@ namespace Lektion_SUT24_250414_API_intro
 
             // Add services to the container.
 
+            builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+            builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
             //builder.Services.AddControllers();
             builder.Services.AddControllers().AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
