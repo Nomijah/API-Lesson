@@ -1,5 +1,6 @@
 ﻿using Lektion_SUT24_250414_API_intro.Data;
 using Lektion_SUT24_250414_API_intro.Models;
+using Lektion_SUT24_250414_API_intro.Models.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,16 +38,39 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         }
 
         [HttpPost(Name = "CreateMovie")]
-        public async Task<IActionResult> CreateMovie(Movie newMovie)
+        public async Task<IActionResult> CreateMovie(CreateMovieRequest newMovie)
         {
             if (newMovie == null)
             {
                 return BadRequest(new { errorMessage = "Data missing." });
             }
-            _context.Movies.Add(newMovie);
+
+            var actorList = new List<Actor>();
+            if (newMovie.ActorIds.Length > 0)
+            {
+                foreach (var id in newMovie.ActorIds)
+                {
+                    var actor = _context.Actors.Find(id);
+                    if(actor != null)
+                    {
+                        actorList.Add(actor);
+                    }
+                }
+            }
+
+            var movieToAdd = new Movie()
+            {
+                Title = newMovie.Title,
+                Genre = newMovie.Genre,
+                Length = newMovie.Length,
+                DirectorId = newMovie.DirectorId,
+                Actors = actorList
+            };
+
+            _context.Movies.Add(movieToAdd);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMovieById), new { id = newMovie.Id}, newMovie);
+            return CreatedAtAction(nameof(GetMovieById), new { id = movieToAdd.Id}, movieToAdd);
         }
 
         [HttpPut("{id}", Name = "UpdateMovie")]
