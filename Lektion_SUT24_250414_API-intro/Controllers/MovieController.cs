@@ -20,7 +20,7 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         }
 
         [HttpGet(Name = "GetMovies")]
-        public async Task<ActionResult<ICollection<Movie>>> GetMovies()
+        public async Task<ActionResult<ICollection<GetMovieResponse>>> GetMovies()
         {
             //return Ok(await _context.Movies.Include(m => m.Director).Include(m => m.Actors).ToListAsync());
             return Ok(await _context.Movies.Select(m => new { m.Title, m.Length, m.Genre, m.Director, m.Actors }).ToListAsync());
@@ -29,10 +29,13 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         [HttpGet("{id}", Name = "GetMovieById")]
         public async Task<ActionResult<Movie>> GetMovieById(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _context.Movies
+                .Select(m => new { m.Id, m.Title, m.Length, m.Genre, m.Director, m.Actors })
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (movie == null)
             {
-                return NotFound(new { errorMessage = "Filmen hittades inte."});
+                return NotFound(new { errorMessage = "Filmen hittades inte." });
             }
             return Ok(movie);
         }
@@ -46,15 +49,23 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
             }
 
             var actorList = new List<Actor>();
-            if (newMovie.ActorIds.Length > 0)
+
+            if (newMovie.ActorIds != null)
             {
-                foreach (var id in newMovie.ActorIds)
+                var validActorIds = await _context.Actors
+                    .Where(a => newMovie.ActorIds.Contains(a.Id))
+                    .Select(a => a.Id)
+                    .ToListAsync();
+
+                if (validActorIds.Count != newMovie.ActorIds.Length)
                 {
-                    var actor = _context.Actors.Find(id);
-                    if(actor != null)
-                    {
-                        actorList.Add(actor);
-                    }
+                    return BadRequest(new { errorMessage = "One or more actor IDs are invalid." });
+                }
+                actorList = validActorIds.Select(id => new Actor { Id = id }).ToList();
+
+                foreach (var actor in actorList)
+                {
+                    _context.Actors.Attach(actor);
                 }
             }
 
@@ -70,30 +81,49 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
             _context.Movies.Add(movieToAdd);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMovieById), new { id = movieToAdd.Id}, movieToAdd);
+            return CreatedAtAction(nameof(GetMovieById), new { id = movieToAdd.Id }, movieToAdd);
         }
 
         [HttpPut("{id}", Name = "UpdateMovie")]
-        public async Task<IActionResult> UpdateMovie(int id, Movie updatedMovie)
+        public async Task<IActionResult> UpdateMovie(int id, CreateMovieRequest updatedMovie)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+
             var movieToUpdate = _context.Movies.Find(id);
-            Console.WriteLine(sw.ElapsedMilliseconds);
+
             if (movieToUpdate == null)
             {
                 return NotFound(new { errorMessage = "Filmen hittades inte." });
             }
 
+            var actorList = new List<Actor>();
+
+            if (updatedMovie.ActorIds != null)
+            {
+                var validActorIds = await _context.Actors
+                    .Where(a => updatedMovie.ActorIds.Contains(a.Id))
+                    .Select(a => a.Id)
+                    .ToListAsync();
+
+                if (validActorIds.Count != updatedMovie.ActorIds.Length)
+                {
+                    return BadRequest(new { errorMessage = "One or more actor IDs are invalid." });
+                }
+                actorList = validActorIds.Select(id => new Actor { Id = id }).ToList();
+
+                foreach (var actor in actorList)
+                {
+                    _context.Actors.Attach(actor);
+                }
+            }
+
             movieToUpdate.Length = updatedMovie.Length;
             movieToUpdate.Title = updatedMovie.Title;
             movieToUpdate.DirectorId = updatedMovie.DirectorId;
-            movieToUpdate.Actors = updatedMovie.Actors;
+            movieToUpdate.Actors = actorList;
             movieToUpdate.Genre = updatedMovie.Genre;
 
             await _context.SaveChangesAsync();
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
+
             return NoContent();
         }
 
