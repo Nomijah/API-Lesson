@@ -2,7 +2,7 @@
 
 namespace Lektion_SUT24_250414_API_intro.Models.DTOs
 {
-    public class CreateDirectorRequest
+    public record CreateDirectorRequest
     {
         [Required]
         public string FirstName { get; set; } = string.Empty;
