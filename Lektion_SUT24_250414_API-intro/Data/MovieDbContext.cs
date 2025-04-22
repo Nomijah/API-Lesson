@@ -69,7 +69,7 @@ namespace Lektion_SUT24_250414_API_intro.Data
             modelBuilder.Entity<Movie>()
                 .HasMany(m => m.Actors)
                 .WithMany(a => a.Movies)
-                .UsingEntity(j => j.HasData(
+                .UsingEntity(am => am.HasData(
                     new { MoviesId = 1, ActorsId = 1 },
                     new { MoviesId = 1, ActorsId = 2 },
                     new { MoviesId = 1, ActorsId = 3 },
