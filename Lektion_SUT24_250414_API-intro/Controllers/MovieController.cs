@@ -23,21 +23,48 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
         public async Task<ActionResult<ICollection<GetMovieResponse>>> GetMovies()
         {
             //return Ok(await _context.Movies.Include(m => m.Director).Include(m => m.Actors).ToListAsync());
-            return Ok(await _context.Movies.Select(m => new { m.Title, m.Length, m.Genre, m.Director, m.Actors }).ToListAsync());
+            return Ok(await _context.Movies
+                .Select(m => new MovieDto
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Length = m.Length,
+                    Genre = m.Genre,
+                    Director = m.Director,
+                    Actors = m.Actors
+                }).ToListAsync());
         }
 
         [HttpGet("{id}", Name = "GetMovieById")]
-        public async Task<ActionResult<Movie>> GetMovieById(int id)
+        public async Task<ActionResult<GetMovieResponse>> GetMovieById(int id)
         {
             var movie = await _context.Movies
-                .Select(m => new { m.Id, m.Title, m.Length, m.Genre, m.Director, m.Actors })
+                .Select(m => new MovieDto
+                { 
+                    Id = m.Id, 
+                    Title = m.Title, 
+                    Length = m.Length, 
+                    Genre = m.Genre, 
+                    Director =  m.Director, 
+                    Actors = m.Actors 
+                })
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
             {
                 return NotFound(new { errorMessage = "Filmen hittades inte." });
             }
-            return Ok(movie);
+
+            var movieResponse = new GetMovieResponse()
+            {
+                Title = movie.Title,
+                Genre = movie.Genre,
+                Length = movie.Length,
+                Director = movie.Director ?? new Director(),
+                Actors = movie.Actors ?? new List<Actor>()
+            };
+
+            return Ok(movieResponse);
         }
 
         [HttpPost(Name = "CreateMovie")]
@@ -61,6 +88,7 @@ namespace Lektion_SUT24_250414_API_intro.Controllers
                 {
                     return BadRequest(new { errorMessage = "One or more actor IDs are invalid." });
                 }
+
                 actorList = validActorIds.Select(id => new Actor { Id = id }).ToList();
 
                 foreach (var actor in actorList)

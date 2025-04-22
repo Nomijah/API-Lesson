@@ -2,16 +2,17 @@
 
 namespace Lektion_SUT24_250414_API_intro.Models.DTOs
 {
-    public class GetMovieResponse
+    public class MovieDto
     {
+        public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public TimeSpan Length { get; set; }
         public string? Genre { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Director? Director { get; set; }
+        public ICollection<Actor>? Actors { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ICollection<Actor>? Actors { get; set; }
+        public Director? Director { get; set; }
     }
 }

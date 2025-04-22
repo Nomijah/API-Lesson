@@ -14,6 +14,11 @@ namespace Lektion_SUT24_250414_API_intro.Models
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ICollection<Movie>? Movies { get; set; }
 
+        public Director()
+        {
+
+        }
+
         public Director(string firstName, string? lastName, int birthYear)
         {
             FirstName = firstName;

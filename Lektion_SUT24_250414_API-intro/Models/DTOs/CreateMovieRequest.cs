@@ -1,14 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Lektion_SUT24_250414_API_intro.Models.DTOs
+﻿namespace Lektion_SUT24_250414_API_intro.Models.DTOs
 {
-    public class CreateMovieRequest
+    public record CreateMovieRequest
     {
-        [Required]
-        public string Title { get; set; } = string.Empty;
-        public TimeSpan Length { get; set; } = TimeSpan.Zero;
-        public string? Genre { get; set; }
-        public int DirectorId { get; set; }
-        public int[]? ActorIds { get; set; }
+        public string Title { get; init; } = string.Empty;
+        public TimeSpan Length { get; init; } = TimeSpan.Zero;
+        public string? Genre { get; init; }
+        public int DirectorId { get; init; }
+        public int[]? ActorIds { get; init; }
     }
 }
